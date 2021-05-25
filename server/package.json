@@ -1,0 +1,19 @@
+{
+    "name": "server",
+    "version": "1.0.0",
+    "main": "index.js",
+    "license": "MIT",
+    "scripts": {
+        "dev": "nodemon src/index.js",
+        "start": "node src/index.js"
+    },
+    "dependencies": {
+        "async-captcha": "^1.0.4",
+        "cors": "^2.8.5",
+        "express": "^4.17.1",
+        "puppeteer": "^5.5.0"
+    },
+    "devDependencies": {
+        "nodemon": "^2.0.6"
+    }
+}

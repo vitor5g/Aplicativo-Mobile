@@ -1,0 +1,108 @@
+import { Produto } from '../schemas/Produto.model'
+import { DatabaseConnection } from '../database/DataBaseConnection'
+
+const table = "produto"
+const db = DatabaseConnection.getConnection()
+
+export default class ProdutoService {
+
+
+    static addData(param: Produto) {
+        return new Promise((resolve, reject) => db.transaction(
+            tx => {
+                tx.executeSql(`insert into ${table} (nome, descricao, quantidade, codBarras, preco, cesta_id) 
+                values (?, ?, ?, ?, ?, ?)`,
+                    [param.nome, param.descricao, param.quantidade, param.codBarras, param.preco, param.cesta_id],
+                    (_, { insertId, rows }) => {
+                        console.log("id insert: " + insertId);
+                        resolve(insertId)
+                    }), (sqlError: unknown) => {
+                        console.log(sqlError);
+                    }
+            }, (txError) => {
+                console.log(txError);
+            }));
+    }
+
+    static deleteById(id: number) {
+        db.transaction(
+            tx => {
+                tx.executeSql(`delete from ${table} where id = ?;`, [id], (_, { rows }) => {
+                }), (sqlError: unknown) => {
+                    console.log(sqlError);
+                }
+            }, (txError) => {
+                console.log(txError);
+
+            });
+    }
+
+    static deleteAll() {
+        return new Promise((resolve, reject) => db.transaction(tx => {
+            tx.executeSql(`DELETE FROM ${table}`, [], (_, { rows }) => {
+                // resolve(rows)
+            }), (sqlError: unknown) => {
+                console.log(sqlError);
+            }
+        }, (txError) => {
+            console.log(txError);
+        }))
+
+
+    }
+
+
+    static updateById(param: Produto) {
+        return new Promise((resolve, reject) => db.transaction(tx => {
+            tx.executeSql(`update ${table} set nome = ?, descricao = ?, quantidade = ?, preco = ?, codBarras = ?, cesta_id = ? where id = ?;`, [param.nome, param.descricao, param.quantidade, param.preco, param.codBarras, param.cesta_id, param.id], () => {
+            }), (sqlError: unknown) => {
+                console.log(sqlError);
+            }
+        }, (txError) => {
+            console.log(txError);
+
+        }));
+    }
+
+    static findById(id: number) {
+        return new Promise((resolve, reject) => db.transaction(tx => {
+            tx.executeSql(`select * from ${table} where id=?`, [id], (_, { rows }) => {
+                resolve(rows)
+            }), (sqlError: unknown) => {
+                console.log(sqlError);
+            }
+        }, (txError) => {
+            console.log(txError);
+
+        }));
+    }
+
+    static findByCestaId(id: number) {
+        return new Promise((resolve, reject) => db.transaction(tx => {
+            tx.executeSql(`select * from ${table} where cesta_id=?`, [id], (_, { rows }) => {
+                resolve(rows)
+            }), (sqlError: unknown) => {
+                console.log(sqlError);
+            }
+        }, (txError) => {
+            console.log(txError);
+
+        }));
+    }
+
+    static findAll() {
+        return new Promise((resolve, reject) => db.transaction(tx => {
+            tx.executeSql(`select * from ${table}`, [], (_, { rows }) => {
+                resolve(rows)
+            }), (sqlError: unknown) => {
+                console.log(sqlError);
+            }
+        }, (txError) => {
+            console.log(txError);
+        }))
+
+
+    }
+
+
+}
